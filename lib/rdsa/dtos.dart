@@ -1,15 +1,27 @@
-class ReportDto {
+import 'package:flutter/services.dart';
+
+class RDSAReportDTO {
   final InfoDto info;
   final List<VisitDto> visits;
 
-  ReportDto({required this.info, required this.visits});
+  final Uint8List frontPageBytes;
+  final Uint8List backPageBytes;
 
-  factory ReportDto.fromJson(Map<String, dynamic> json) {
-    return ReportDto(
+  RDSAReportDTO({
+    required this.info,
+    required this.visits,
+    required this.frontPageBytes,
+    required this.backPageBytes,
+  });
+
+  factory RDSAReportDTO.fromJson(Map<String, dynamic> json) {
+    return RDSAReportDTO(
       info: InfoDto.fromJson(json['info']),
       visits: (json['visits'] as List)
           .map((e) => VisitDto.fromJson(e))
           .toList(),
+      frontPageBytes: json['frontPageBytes'],
+      backPageBytes: json['backPageBytes'],
     );
   }
 
@@ -81,6 +93,7 @@ class VisitDto {
   final String status;
   final TreatmentDataDto? treatmentData;
   final LiraaDataDto? liraaData;
+  final bool inspected;
 
   VisitDto({
     required this.block,
@@ -90,6 +103,7 @@ class VisitDto {
     required this.status,
     required this.treatmentData,
     required this.liraaData,
+    required this.inspected,
   });
 
   factory VisitDto.fromJson(Map<String, dynamic> json) {
@@ -101,6 +115,7 @@ class VisitDto {
       status: json['status'],
       treatmentData: TreatmentDataDto.fromJson(json['treatmentData']),
       liraaData: LiraaDataDto.fromJson(json['liraaData']),
+      inspected: json['inspected'],
     );
   }
 
@@ -112,6 +127,7 @@ class VisitDto {
     'status': status,
     'treatmentData': treatmentData?.toJson(),
     'liraaData': liraaData?.toJson(),
+    'inspected': inspected,
   };
 }
 

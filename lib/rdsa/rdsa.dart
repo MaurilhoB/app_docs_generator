@@ -4,19 +4,11 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:pdf_generator/rdsa/dtos.dart';
 
 class Rdsa {
-  static Future<Uint8List> generateRDSA(ReportDto dto) async {
+  static Future<Uint8List> generateRDSA(RDSAReportDTO dto) async {
     final pdf = pw.Document();
 
-    final frontPageBG = pw.MemoryImage(
-      (await rootBundle.load(
-        'packages/pdf_generator/assets/rdsa_front.png',
-      )).buffer.asUint8List(),
-    );
-    final backPageBG = pw.MemoryImage(
-      (await rootBundle.load(
-        'packages/pdf_generator/assets/rdsa_back.png',
-      )).buffer.asUint8List(),
-    );
+    final frontPageBG = pw.MemoryImage(dto.frontPageBytes);
+    final backPageBG = pw.MemoryImage(dto.backPageBytes);
 
     final visits = dto.visits;
     final info = dto.info;
@@ -245,7 +237,9 @@ class Rdsa {
           fields.add(
             drawField(
               containedText(
-                data!.eliminatedDeposits.toString(),
+                data!.eliminatedDeposits <= 0
+                    ? ''
+                    : data.eliminatedDeposits.toString(),
                 width: 19,
                 height: 14.5,
               ),
@@ -263,37 +257,40 @@ class Rdsa {
               FieldPosition(595, y),
             ),
           );
-          fields.add(
-            drawField(
-              containedText(
-                'BTI',
-                width: 17.5,
-                height: 14.5,
-                style: boldTextStyle,
+
+          if (data.treated == true) {
+            fields.add(
+              drawField(
+                containedText(
+                  'BTI',
+                  width: 17.5,
+                  height: 14.5,
+                  style: boldTextStyle,
+                ),
+                FieldPosition(612, y),
               ),
-              FieldPosition(612, y),
-            ),
-          );
-          fields.add(
-            drawField(
-              containedText(
-                data.usedLarvicideAmount.toStringAsFixed(2),
-                width: 24,
-                height: 14.5,
+            );
+            fields.add(
+              drawField(
+                containedText(
+                  data.usedLarvicideAmount.toStringAsFixed(2),
+                  width: 24,
+                  height: 14.5,
+                ),
+                FieldPosition(632, y),
               ),
-              FieldPosition(632, y),
-            ),
-          );
-          fields.add(
-            drawField(
-              containedText(
-                data.treatedDeposits.toString(),
-                width: 30,
-                height: 14.5,
+            );
+            fields.add(
+              drawField(
+                containedText(
+                  data.treatedDeposits.toString(),
+                  width: 30,
+                  height: 14.5,
+                ),
+                FieldPosition(657, y),
               ),
-              FieldPosition(657, y),
-            ),
-          );
+            );
+          }
         }
 
         if (visit.liraaData != null) {
@@ -403,6 +400,15 @@ class Rdsa {
                 height: 14.5,
               ),
               FieldPosition(550.5, y),
+            ),
+          );
+        }
+
+        if (visit.inspected == true) {
+          fields.add(
+            drawField(
+              containedText('X', width: 16, height: 14.5, style: boldTextStyle),
+              FieldPosition(487, y),
             ),
           );
         }
