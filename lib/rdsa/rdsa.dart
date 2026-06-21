@@ -143,17 +143,22 @@ class Rdsa {
         final double y = 235.5 + i * 14.5 + i * 0.7;
         final visit = slice[i];
 
-        fields.add(
-          drawField(
-            containedText(
-              visit.block.toString(),
-              width: 14,
-              height: 14.5,
-              style: pw.TextStyle(fontSize: 7, fontWeight: pw.FontWeight.bold),
+        if (visit.block != null) {
+          fields.add(
+            drawField(
+              containedText(
+                visit.block.toString(),
+                width: 14,
+                height: 14.5,
+                style: pw.TextStyle(
+                  fontSize: 7,
+                  fontWeight: pw.FontWeight.bold,
+                ),
+              ),
+              FieldPosition(28.5, y),
             ),
-            FieldPosition(28.5, y),
-          ),
-        );
+          );
+        }
         fields.add(
           drawField(
             containedText(
@@ -166,31 +171,35 @@ class Rdsa {
             FieldPosition(74, y),
           ),
         );
-        fields.add(
-          drawField(
-            containedText(
-              visit.sus.toString().split('.')[0],
-              width: 16,
-              height: 14.5,
-              style: boldTextStyle,
-            ),
-            FieldPosition(244, y),
-          ),
-        );
 
-        // sus sequence if exists
-        if (visit.sus.toString().split('.').length > 1) {
+        if (visit.sus != null) {
           fields.add(
             drawField(
               containedText(
-                visit.sus.toString().split('.')[1],
+                visit.sus.toString().split('.')[0],
                 width: 16,
                 height: 14.5,
                 style: boldTextStyle,
               ),
-              FieldPosition(261, y),
+              FieldPosition(244, y),
             ),
           );
+
+          final seq = visit.sus.toString().split('.')[1];
+          // sus sequence if exists
+          if (seq != '0') {
+            fields.add(
+              drawField(
+                containedText(
+                  visit.sus.toString().split('.')[1],
+                  width: 16,
+                  height: 14.5,
+                  style: boldTextStyle,
+                ),
+                FieldPosition(261, y),
+              ),
+            );
+          }
         }
 
         fields.add(
@@ -472,155 +481,194 @@ class Rdsa {
         ),
       );
 
-      bpFields.add(
-        drawField(
-          containedText(
-            summaryData.recovered.toString(),
-            width: 34,
-            height: 16,
+      if (info.hasTreatment) {
+        bpFields.add(
+          drawField(
+            containedText(
+              summaryData.recovered.toString(),
+              width: 34,
+              height: 16,
+            ),
+            FieldPosition(356, 85),
           ),
-          FieldPosition(356, 85),
-        ),
-      );
-      bpFields.add(
-        drawField(
-          containedText(summaryData.denied.toString(), width: 36, height: 16),
-          FieldPosition(468, 85),
-        ),
-      );
-      bpFields.add(
-        drawField(
-          containedText(summaryData.closed.toString(), width: 36, height: 16),
-          FieldPosition(505, 85),
-        ),
-      );
+        );
+        bpFields.add(
+          drawField(
+            containedText(summaryData.denied.toString(), width: 36, height: 16),
+            FieldPosition(468, 85),
+          ),
+        );
+        bpFields.add(
+          drawField(
+            containedText(summaryData.closed.toString(), width: 36, height: 16),
+            FieldPosition(505, 85),
+          ),
+        );
 
-      bpFields.add(
-        drawField(
-          containedText(
-            summaryData.treatment.treated.toString(),
-            width: 28,
-            height: 16,
+        bpFields.add(
+          drawField(
+            containedText(
+              summaryData.treatment.treated.toString(),
+              width: 28,
+              height: 16,
+            ),
+            FieldPosition(249, 85),
           ),
-          FieldPosition(249, 85),
-        ),
-      );
-      bpFields.add(
-        drawField(
-          containedText(
-            summaryData.treatment.eliminatedDeposits.toString(),
-            width: 43,
-            height: 17,
+        );
+        bpFields.add(
+          drawField(
+            containedText('0', width: 28, height: 16),
+            FieldPosition(282, 85),
           ),
-          FieldPosition(28, 188),
-        ),
-      );
-      bpFields.add(
-        drawField(
-          containedText('BTI', width: 30, height: 17),
-          FieldPosition(72.5, 188),
-        ),
-      );
-      bpFields.add(
-        drawField(
-          containedText(
-            summaryData.treatment.usedLarvicideAmount.toStringAsFixed(2),
-            width: 43,
-            height: 17,
+        );
+        bpFields.add(
+          drawField(
+            containedText(
+              summaryData.treatment.eliminatedDeposits.toString(),
+              width: 43,
+              height: 17,
+            ),
+            FieldPosition(28, 188),
           ),
-          FieldPosition(104, 188),
-        ),
-      );
-      bpFields.add(
-        drawField(
-          containedText(
-            summaryData.treatment.treatedDeposits.toString(),
-            width: 43,
-            height: 17,
+        );
+        bpFields.add(
+          drawField(
+            containedText('BTI', width: 30, height: 17),
+            FieldPosition(72.5, 188),
           ),
-          FieldPosition(148, 188),
-        ),
-      );
+        );
+        bpFields.add(
+          drawField(
+            containedText(
+              summaryData.treatment.usedLarvicideAmount.toStringAsFixed(2),
+              width: 43,
+              height: 17,
+            ),
+            FieldPosition(104, 188),
+          ),
+        );
+        bpFields.add(
+          drawField(
+            containedText(
+              summaryData.treatment.treatedDeposits.toString(),
+              width: 43,
+              height: 17,
+            ),
+            FieldPosition(148, 188),
+          ),
+        );
+      }
 
-      bpFields.add(
-        drawField(
-          containedText(
-            (summaryData.finished + summaryData.recovered).toString(),
-            width: 38,
-            height: 16,
+      if (info.hasLiraa) {
+        bpFields.add(
+          drawField(
+            containedText(
+              (summaryData.finished + summaryData.recovered).toString(),
+              width: 38,
+              height: 16,
+            ),
+            FieldPosition(316, 85),
           ),
-          FieldPosition(316, 85),
-        ),
-      );
-      bpFields.add(
-        drawField(
-          containedText(
-            summaryData.liraa.vialsCount.toString(),
-            width: 42,
-            height: 16,
+        );
+
+        bpFields.add(
+          drawField(
+            containedText(
+              summaryData.liraa.vialsCount.toString(),
+              width: 42,
+              height: 16,
+            ),
+            FieldPosition(405, 85),
           ),
-          FieldPosition(405, 85),
-        ),
-      );
-      bpFields.add(
-        drawField(
-          containedText(summaryData.liraa.a1.toString(), width: 32, height: 16),
-          FieldPosition(562, 85),
-        ),
-      );
-      bpFields.add(
-        drawField(
-          containedText(summaryData.liraa.a2.toString(), width: 32, height: 16),
-          FieldPosition(594, 85),
-        ),
-      );
-      bpFields.add(
-        drawField(
-          containedText(summaryData.liraa.b.toString(), width: 32, height: 16),
-          FieldPosition(624, 85),
-        ),
-      );
-      bpFields.add(
-        drawField(
-          containedText(summaryData.liraa.c.toString(), width: 32, height: 16),
-          FieldPosition(656, 85),
-        ),
-      );
-      bpFields.add(
-        drawField(
-          containedText(summaryData.liraa.d1.toString(), width: 32, height: 16),
-          FieldPosition(686.5, 85),
-        ),
-      );
-      bpFields.add(
-        drawField(
-          containedText(summaryData.liraa.d2.toString(), width: 32, height: 16),
-          FieldPosition(718, 85),
-        ),
-      );
-      bpFields.add(
-        drawField(
-          containedText(summaryData.liraa.e.toString(), width: 32, height: 16),
-          FieldPosition(750, 85),
-        ),
-      );
-      bpFields.add(
-        drawField(
-          containedText(
-            (summaryData.liraa.a1 +
-                    summaryData.liraa.a2 +
-                    summaryData.liraa.b +
-                    summaryData.liraa.c +
-                    summaryData.liraa.d1 +
-                    summaryData.liraa.d2 +
-                    summaryData.liraa.e)
-                .toString(),
-            width: 32,
-            height: 16,
+        );
+        bpFields.add(
+          drawField(
+            containedText(
+              summaryData.liraa.a1.toString(),
+              width: 32,
+              height: 16,
+            ),
+            FieldPosition(562, 85),
           ),
-          FieldPosition(782, 85),
-        ),
-      );
+        );
+        bpFields.add(
+          drawField(
+            containedText(
+              summaryData.liraa.a2.toString(),
+              width: 32,
+              height: 16,
+            ),
+            FieldPosition(594, 85),
+          ),
+        );
+        bpFields.add(
+          drawField(
+            containedText(
+              summaryData.liraa.b.toString(),
+              width: 32,
+              height: 16,
+            ),
+            FieldPosition(624, 85),
+          ),
+        );
+        bpFields.add(
+          drawField(
+            containedText(
+              summaryData.liraa.c.toString(),
+              width: 32,
+              height: 16,
+            ),
+            FieldPosition(656, 85),
+          ),
+        );
+        bpFields.add(
+          drawField(
+            containedText(
+              summaryData.liraa.d1.toString(),
+              width: 32,
+              height: 16,
+            ),
+            FieldPosition(686.5, 85),
+          ),
+        );
+        bpFields.add(
+          drawField(
+            containedText(
+              summaryData.liraa.d2.toString(),
+              width: 32,
+              height: 16,
+            ),
+            FieldPosition(718, 85),
+          ),
+        );
+        bpFields.add(
+          drawField(
+            containedText(
+              summaryData.liraa.e.toString(),
+              width: 32,
+              height: 16,
+            ),
+            FieldPosition(750, 85),
+          ),
+        );
+        bpFields.add(
+          drawField(
+            containedText(
+              (summaryData.liraa.a1 +
+                      summaryData.liraa.a2 +
+                      summaryData.liraa.b +
+                      summaryData.liraa.c +
+                      summaryData.liraa.d1 +
+                      summaryData.liraa.d2 +
+                      summaryData.liraa.e)
+                  .toString(),
+              width: 32,
+              height: 16,
+            ),
+            FieldPosition(782, 85),
+          ),
+        );
+      }
 
       final backPage = pw.Page(
         pageFormat: PdfPageFormat.a4.landscape,
@@ -681,24 +729,27 @@ SummaryData getSummaryData(List<VisitDto> visits) {
   final summaryData = SummaryData();
 
   for (var visit in visits) {
-    switch (visit.propertyType) {
-      case 'R':
-        summaryData.r += 1;
-        break;
-      case 'C':
-        summaryData.c += 1;
-        break;
-      case 'TB':
-        summaryData.tb += 1;
-        break;
-      case 'O':
-        summaryData.o += 1;
-        break;
-      case 'PE':
-        summaryData.pe += 1;
-        break;
-      default:
+    if (visit.status != 'pending') {
+      switch (visit.propertyType) {
+        case 'R':
+          summaryData.r += 1;
+          break;
+        case 'C':
+          summaryData.c += 1;
+          break;
+        case 'TB':
+          summaryData.tb += 1;
+          break;
+        case 'O':
+          summaryData.o += 1;
+          break;
+        case 'PE':
+          summaryData.pe += 1;
+          break;
+        default:
+      }
     }
+
     switch (visit.status) {
       case 'pending':
         summaryData.pending += 1;

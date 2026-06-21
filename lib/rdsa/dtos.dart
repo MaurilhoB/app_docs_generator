@@ -42,6 +42,8 @@ class InfoDto {
   final String activityDate;
   final String activityCycle;
   final String activityCode;
+  final bool hasLiraa;
+  final bool hasTreatment;
 
   InfoDto({
     required this.userName,
@@ -54,6 +56,8 @@ class InfoDto {
     required this.activityDate,
     required this.activityCycle,
     required this.activityCode,
+    required this.hasLiraa,
+    required this.hasTreatment,
   });
 
   factory InfoDto.fromJson(Map<String, dynamic> json) {
@@ -68,6 +72,8 @@ class InfoDto {
       activityDate: json['activityDate'],
       activityCycle: json['activityCycle'],
       activityCode: json['activityCode'],
+      hasLiraa: json['hasLiraa'],
+      hasTreatment: json['hasTreatment'],
     );
   }
 
@@ -86,8 +92,8 @@ class InfoDto {
 }
 
 class VisitDto {
-  final int block;
-  final String sus;
+  final int? block;
+  final double? sus;
   final String street;
   final String propertyType;
   final String status;
